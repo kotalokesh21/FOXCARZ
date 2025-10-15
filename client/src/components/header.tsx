@@ -15,7 +15,7 @@ export function Header() {
           data-testid="link-home"
         >
           <Car className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">Drive Easy</span>
+          <span className="text-xl font-bold">FOXCARZ</span>
         </button>
 
         <nav className="hidden md:flex items-center gap-6">
@@ -39,6 +39,20 @@ export function Header() {
             data-testid="link-nav-booking"
           >
             Book Now
+          </button>
+          <button 
+            onClick={() => navigate("/about")} 
+            className="text-sm font-medium hover:text-primary transition-colors" 
+            data-testid="link-nav-about"
+          >
+            About Us
+          </button>
+          <button 
+            onClick={() => navigate("/faq")} 
+            className="text-sm font-medium hover:text-primary transition-colors" 
+            data-testid="link-nav-faq"
+          >
+            FAQs
           </button>
         </nav>
 

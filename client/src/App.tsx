@@ -10,6 +10,9 @@ import Home from "@/pages/home";
 import Fleet from "@/pages/fleet";
 import VehicleDetail from "@/pages/vehicle-detail";
 import Booking from "@/pages/booking";
+import About from "@/pages/about";
+import FAQ from "@/pages/faq";
+import Terms from "@/pages/terms";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,6 +25,9 @@ function Router() {
           <Route path="/fleet" component={Fleet} />
           <Route path="/vehicle/:id" component={VehicleDetail} />
           <Route path="/booking" component={Booking} />
+          <Route path="/about" component={About} />
+          <Route path="/faq" component={FAQ} />
+          <Route path="/terms" component={Terms} />
           <Route component={NotFound} />
         </Switch>
       </main>

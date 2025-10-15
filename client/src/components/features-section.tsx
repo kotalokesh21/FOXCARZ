@@ -9,8 +9,8 @@ const features = [
   },
   {
     icon: Shield,
-    title: "Zero Deposit",
-    description: "No advance deposit required. Book instantly with complete peace of mind.",
+    title: "Free Cancellation",
+    description: "Cancel your booking up to 6 hours in advance at no extra cost.",
   },
   {
     icon: Clock,

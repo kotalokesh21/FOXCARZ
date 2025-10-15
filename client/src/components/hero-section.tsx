@@ -15,7 +15,7 @@ export function HeroSection() {
         <div className="flex flex-col items-center text-center gap-8 max-w-4xl mx-auto">
           {/* Badge */}
           <Badge variant="secondary" className="px-4 py-1.5" data-testid="badge-promo">
-            <span className="text-sm font-medium">New Users Get 1 Day Free!</span>
+            <span className="text-sm font-medium">New Users Get 10% Off!</span>
           </Badge>
 
           {/* Main Headline */}
@@ -26,7 +26,7 @@ export function HeroSection() {
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
               Premium self-drive cars with unlimited kilometers and zero deposit. 
-              Starting at just ₹54/hour.
+              Starting at just ₹93/hour.
             </p>
           </div>
 
@@ -38,7 +38,7 @@ export function HeroSection() {
             </div>
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-chart-2" />
-              <span className="text-sm font-medium">No Deposit</span>
+              <span className="text-sm font-medium">Free Cancellation</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-chart-2" />
@@ -75,7 +75,7 @@ export function HeroSection() {
           {/* Pricing Info */}
           <div className="mt-4">
             <p className="text-sm text-muted-foreground">
-              Starting from <span className="text-2xl font-bold text-foreground">₹54</span>/hour
+              Starting from <span className="text-2xl font-bold text-foreground">₹93</span>/hour
             </p>
           </div>
         </div>

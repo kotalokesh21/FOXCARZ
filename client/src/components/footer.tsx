@@ -13,7 +13,7 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Car className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">Drive Easy</span>
+              <span className="text-xl font-bold">FOXCARZ</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Your trusted partner for self-drive car rentals. Experience freedom on the road with unlimited kilometers and zero deposit.
@@ -38,10 +38,18 @@ export function Footer() {
               >
                 Book Now
               </button>
-              <button className="text-sm text-muted-foreground hover:text-primary transition-colors text-left">
+              <button 
+                onClick={() => navigate("/about")}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
+                data-testid="link-footer-about"
+              >
                 About Us
               </button>
-              <button className="text-sm text-muted-foreground hover:text-primary transition-colors text-left">
+              <button 
+                onClick={() => navigate("/faq")}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
+                data-testid="link-footer-faq"
+              >
                 FAQs
               </button>
             </nav>
@@ -55,9 +63,9 @@ export function Footer() {
                 <Phone className="h-4 w-4" />
                 <span>+91 9000478478</span>
               </a>
-              <a href="mailto:info@driveeasy.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-email">
+              <a href="mailto:info@foxcarz.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors" data-testid="link-footer-email">
                 <Mail className="h-4 w-4" />
-                <span>info@driveeasy.com</span>
+                <span>info@foxcarz.com</span>
               </a>
               <div className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mt-0.5" />
@@ -81,10 +89,29 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t text-center">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Drive Easy. All rights reserved.
-          </p>
+        <div className="mt-12 pt-8 border-t">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex gap-6 text-sm text-muted-foreground">
+              <button 
+                onClick={() => navigate("/terms")} 
+                className="hover:text-primary transition-colors"
+                data-testid="link-footer-terms"
+              >
+                Terms & Conditions
+              </button>
+              <span>•</span>
+              <button 
+                onClick={() => navigate("/faq")} 
+                className="hover:text-primary transition-colors"
+                data-testid="link-footer-faq-bottom"
+              >
+                FAQs
+              </button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} FOXCARZ. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
