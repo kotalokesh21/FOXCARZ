@@ -63,6 +63,13 @@ export function Header() {
               <span className="sr-only">Call us</span>
             </Button>
           </a>
+          <Button
+            variant="secondary"
+            onClick={() => navigate("/auth")}
+            data-testid="button-signin"
+          >
+            Sign In
+          </Button>
           <ThemeToggle />
         </div>
       </div>

@@ -3,6 +3,40 @@ import { pgTable, text, varchar, integer, decimal, boolean } from "drizzle-orm/p
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Users table
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  createdAt: text("created_at").default(sql`now()`),
+});
+
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+
+// Admins table
+export const admins = pgTable("admins", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  createdAt: text("created_at").default(sql`now()`),
+});
+
+export const insertAdminSchema = createInsertSchema(admins).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertAdmin = z.infer<typeof insertAdminSchema>;
+export type Admin = typeof admins.$inferSelect;
+
 // Vehicles table
 export const vehicles = pgTable("vehicles", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -15,8 +49,8 @@ export const vehicles = pgTable("vehicles", {
   hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }).notNull(),
   dailyRate: decimal("daily_rate", { precision: 10, scale: 2 }).notNull(),
   weeklyRate: decimal("weekly_rate", { precision: 10, scale: 2 }).notNull(),
-  available: boolean("available").notNull().default(true),
-  features: text("features").array().notNull().default([]),
+  available: boolean("available").default(true),
+  features: text("features").array().default([]),
 });
 
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({

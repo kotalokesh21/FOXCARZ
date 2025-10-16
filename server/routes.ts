@@ -2,8 +2,20 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertVehicleSchema, insertLocationSchema, insertBookingSchema } from "@shared/schema";
+import authRoutes from "./routes/auth";
+import { isAdmin, isAuthenticated } from "./middleware/auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Register auth routes
+  app.use('/api/auth', authRoutes);
+
+  // Import admin routes
+  const bookingsRouter = (await import('./routes/bookings')).default;
+  const reportsRouter = (await import('./routes/reports')).default;
+
+  // Register admin routes with admin middleware
+  app.use('/api/bookings', isAdmin, bookingsRouter);
+  app.use('/api/reports', isAdmin, reportsRouter);
   // Vehicle routes
   app.get("/api/vehicles", async (req, res) => {
     try {
@@ -26,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/vehicles", async (req, res) => {
+  app.post("/api/vehicles", isAdmin, async (req, res) => {
     try {
       const validatedData = insertVehicleSchema.parse(req.body);
       const vehicle = await storage.createVehicle(validatedData);
@@ -90,7 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/bookings", async (req, res) => {
+  app.post("/api/bookings", isAuthenticated, async (req, res) => {
     try {
       const validatedData = insertBookingSchema.parse(req.body);
       const booking = await storage.createBooking(validatedData);

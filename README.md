@@ -96,10 +96,102 @@ The application uses PostgreSQL with Drizzle ORM. Main tables:
 
 ### API Endpoints
 
-- `GET /api/vehicles`: List all available vehicles
-- `GET /api/vehicles/:id`: Get vehicle details
-- `POST /api/bookings`: Create a new booking
-- `GET /api/locations`: List all locations
+#### Authentication Endpoints
+
+```http
+POST /api/auth/signup
+```
+Register a new user
+- Body: `{ "name": string, "email": string, "password": string }`
+- Response: `{ "message": string, "userId": string }`
+
+```http
+POST /api/auth/signin
+```
+Sign in existing user
+- Body: `{ "email": string, "password": string }`
+- Response: `{ "message": string, "userId": string }`
+
+```http
+POST /api/auth/admin/login
+```
+Admin login
+- Body: `{ "email": string, "password": string }`
+- Response: `{ "message": string, "adminId": string }`
+
+```http
+GET /api/auth/me
+```
+Get current user info
+- Response: `{ "user": { "id": string, "name": string, "email": string, "isAdmin": boolean } }`
+
+#### Vehicle Endpoints
+
+```http
+GET /api/vehicles
+```
+List all available vehicles
+- Query Parameters:
+  - `category`: Filter by category (optional)
+  - `available`: Filter by availability (optional)
+- Response: Array of vehicle objects
+
+```http
+GET /api/vehicles/:id
+```
+Get vehicle details
+- Response: Vehicle object
+
+```http
+POST /api/vehicles
+```
+Add new vehicle (Admin only)
+- Body: Vehicle details
+- Response: Created vehicle object
+
+#### Booking Endpoints
+
+```http
+POST /api/bookings
+```
+Create new booking (Authenticated users only)
+- Body: 
+```json
+{
+  "vehicleId": string,
+  "customerName": string,
+  "customerPhone": string,
+  "customerWhatsapp": string,
+  "locationId": string,
+  "startDate": string,
+  "endDate": string,
+  "startTime": string,
+  "totalCost": number,
+  "rentalType": "hourly" | "daily" | "weekly"
+}
+```
+- Response: Booking confirmation object
+
+```http
+GET /api/bookings
+```
+Get all bookings (Admin only)
+- Response: Array of booking objects
+
+#### Location Endpoints
+
+```http
+GET /api/locations
+```
+List all pickup/drop-off locations
+- Response: Array of location objects
+
+```http
+POST /api/locations
+```
+Add new location (Admin only)
+- Body: Location details
+- Response: Created location object
 
 ## 🤝 Contributing
 

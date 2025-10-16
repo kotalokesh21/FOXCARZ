@@ -1,4 +1,19 @@
 import { type Vehicle, type InsertVehicle, type Location, type InsertLocation, type Booking, type InsertBooking } from "@shared/schema";
+import { drizzle } from 'drizzle-orm/neon-http';
+import { neon, neonConfig } from '@neondatabase/serverless';
+import { vehicles, locations, bookings, users, admins } from '@shared/schema';
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+// Load environment variables
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+
+// Configure neon to work in server environment
+neonConfig.fetchConnectionCache = true;
+
+// Initialize the database connection
+const sql = neon(process.env.DATABASE_URL!);
+export const db = drizzle(sql);
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -154,7 +169,13 @@ export class MemStorage implements IStorage {
 
     vehiclesData.forEach((vehicle) => {
       const id = randomUUID();
-      this.vehicles.set(id, { ...vehicle, id });
+      const newVehicle: Vehicle = {
+        ...vehicle,
+        id,
+        available: vehicle.available ?? true,
+        features: vehicle.features ?? []
+      };
+      this.vehicles.set(id, newVehicle);
     });
 
     // Seed Locations
@@ -202,7 +223,12 @@ export class MemStorage implements IStorage {
 
   async createVehicle(insertVehicle: InsertVehicle): Promise<Vehicle> {
     const id = randomUUID();
-    const vehicle: Vehicle = { ...insertVehicle, id };
+    const vehicle: Vehicle = {
+      ...insertVehicle,
+      id,
+      available: insertVehicle.available ?? true,
+      features: insertVehicle.features ?? []
+    };
     this.vehicles.set(id, vehicle);
     return vehicle;
   }
