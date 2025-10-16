@@ -65,6 +65,26 @@ We use GitHub issues to track public bugs. Report a bug by [opening a new issue]
    npm run dev
    ```
 
+### Real-time Features Development
+
+When working with real-time features:
+
+1. Socket.IO Events:
+   - 'reportUpdate': Emitted when dashboard data changes
+   - 'bookingCreated': Emitted when new booking is made
+   - 'bookingUpdated': Emitted when booking status changes
+
+2. Dashboard Components:
+   - Use the `useRealTime` hook for live data
+   - Implement smooth transitions for updates
+   - Handle WebSocket reconnection gracefully
+
+3. Testing Real-time Features:
+   - Test WebSocket connections
+   - Verify real-time updates
+   - Check data consistency
+   - Test fallback behavior
+
 ### Code Style
 
 - Use TypeScript for all new code

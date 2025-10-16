@@ -14,6 +14,12 @@ FOXCARZ is a modern, full-stack car rental application built with React, TypeScr
 - **Secure Payments**: Safe and reliable payment processing
 - **Multiple Locations**: Convenient pickup and drop-off points
 - **Special Offers**: Regular promotions and loyalty rewards
+- **Real-time Analytics Dashboard**:
+  - Live booking statistics and revenue tracking
+  - Interactive data visualization with charts
+  - Instant updates on new bookings
+  - Custom date range analysis
+  - Trend analysis and reporting
 
 ## 🛠️ Tech Stack
 
@@ -24,6 +30,9 @@ FOXCARZ is a modern, full-stack car rental application built with React, TypeScr
   - Shadcn/ui Components
   - React Query
   - Wouter for Routing
+  - Socket.IO Client
+  - Recharts for Data Visualization
+  - Real-time Dashboard Updates
 
 - **Backend**:
   - Node.js
@@ -31,6 +40,8 @@ FOXCARZ is a modern, full-stack car rental application built with React, TypeScr
   - TypeScript
   - Drizzle ORM
   - PostgreSQL (Neon)
+  - Socket.IO for Real-time Updates
+  - Real-time Analytics Engine
 
 ## 🚀 Quick Start
 

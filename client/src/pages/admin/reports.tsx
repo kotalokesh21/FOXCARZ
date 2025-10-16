@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Card,
@@ -18,6 +18,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format } from "date-fns";
+import { useRealTime } from "@/hooks/use-real-time";
 import {
   BarChart,
   Bar,
@@ -28,10 +29,34 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+interface ReportData {
+  stats: {
+    totalBookings: number;
+    totalRevenue: string;
+    averageBookingValue: string;
+  };
+  revenue: Array<{
+    name: string;
+    amount: number;
+  }>;
+}
+
+const initialData: ReportData = {
+  stats: {
+    totalBookings: 0,
+    totalRevenue: '0',
+    averageBookingValue: '0'
+  },
+  revenue: []
+};
+
 export default function Reports() {
   const [period, setPeriod] = useState("monthly");
   const [startDate, setStartDate] = useState<Date | undefined>(new Date());
   const [endDate, setEndDate] = useState<Date | undefined>(new Date());
+
+  // Use real-time hook for live updates
+  const { data: realtimeData } = useRealTime<ReportData>('reportUpdate', initialData);
 
   const { data: reportData, isLoading, refetch } = useQuery({
     queryKey: ["reports", period, startDate, endDate],
@@ -108,7 +133,7 @@ export default function Reports() {
             <p>Loading report data...</p>
           </CardContent>
         </Card>
-      ) : reportData ? (
+      ) : reportData || realtimeData ? (
         <>
           <Card>
             <CardHeader>
@@ -117,12 +142,21 @@ export default function Reports() {
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={reportData.revenue}>
+                  <BarChart data={realtimeData?.revenue || reportData?.revenue}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
+                    <XAxis 
+                      dataKey="name" 
+                      tickFormatter={(date) => format(new Date(date), 'MMM dd')}
+                    />
                     <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="amount" fill="#3b82f6" />
+                    <Tooltip 
+                      formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Revenue']}
+                    />
+                    <Bar 
+                      dataKey="amount" 
+                      fill="#3b82f6"
+                      animationDuration={300}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -137,15 +171,15 @@ export default function Reports() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 bg-primary/10 rounded-lg">
                   <h3 className="text-lg font-semibold">Total Bookings</h3>
-                  <p className="text-3xl font-bold">{reportData.stats.totalBookings}</p>
+                  <p className="text-3xl font-bold">{(realtimeData?.stats || reportData?.stats)?.totalBookings}</p>
                 </div>
                 <div className="p-4 bg-primary/10 rounded-lg">
                   <h3 className="text-lg font-semibold">Average Booking Value</h3>
-                  <p className="text-3xl font-bold">₹{reportData.stats.averageBookingValue}</p>
+                  <p className="text-3xl font-bold">₹{(realtimeData?.stats || reportData?.stats)?.averageBookingValue}</p>
                 </div>
                 <div className="p-4 bg-primary/10 rounded-lg">
                   <h3 className="text-lg font-semibold">Total Revenue</h3>
-                  <p className="text-3xl font-bold">₹{reportData.stats.totalRevenue}</p>
+                  <p className="text-3xl font-bold">₹{(realtimeData?.stats || reportData?.stats)?.totalRevenue}</p>
                 </div>
               </div>
             </CardContent>

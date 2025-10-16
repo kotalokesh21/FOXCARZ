@@ -5,12 +5,33 @@ import session from "express-session";
 import MemoryStore from "memorystore";
 import dotenv from 'dotenv';
 import path from 'path';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
 
 // Load environment variables
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const SessionStore = MemoryStore(session);
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.NODE_ENV === 'development' ? 'http://localhost:5173' : '*',
+    methods: ['GET', 'POST']
+  }
+});
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
+
+// Make io accessible throughout the app
+app.set('io', io);
 
 // Session configuration
 app.use(session({
