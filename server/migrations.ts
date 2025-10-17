@@ -17,9 +17,26 @@ async function runMigration() {
 
     console.log('Running migrations...');
     
-    // Create tables if they don't exist
+    // Drop and recreate users table with all required fields
+    await sql`DROP TABLE IF EXISTS users CASCADE`;
     await sql`
-      CREATE TABLE IF NOT EXISTS admins (
+      CREATE TABLE users (
+        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        phone TEXT,
+        address TEXT,
+        profile_picture TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Create admins table
+    await sql`DROP TABLE IF EXISTS admins CASCADE`;
+    await sql`
+      CREATE TABLE admins (
         id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
@@ -38,28 +55,6 @@ async function runMigration() {
     await sql`
       INSERT INTO admins (name, email, password)
       VALUES ('Admin', 'admin@foxcarz.com', ${hashedPassword});
-    `;
-
-    await sql`
-      CREATE TABLE IF NOT EXISTS admins (
-        id VARCHAR PRIMARY KEY DEFAULT gen_random_uuid(),
-        name TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-
-    // Create a default admin account with a secure password
-    const adminPassword = await bcrypt.hash('Admin@123', 10);
-    
-    // First, delete any existing admin with the same email to ensure we can create a new one
-    await sql`DELETE FROM admins WHERE email = 'admin@foxcarz.com'`;
-    
-    // Create new admin
-    await sql`
-      INSERT INTO admins (name, email, password)
-      VALUES ('Admin', 'admin@foxcarz.com', ${adminPassword});
     `;
 
     await sql`

@@ -49,6 +49,10 @@ router.post('/signup', async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      phone: null,
+      address: null,
+      profilePicture: null,
+      updatedAt: new Date().toISOString()
     }).returning();
 
     res.status(201).json({ message: 'User created successfully', userId: user.id });

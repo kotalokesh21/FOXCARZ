@@ -9,13 +9,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register auth routes
   app.use('/api/auth', authRoutes);
 
-  // Import admin routes
+  // Import routes
   const bookingsRouter = (await import('./routes/bookings')).default;
   const reportsRouter = (await import('./routes/reports')).default;
+  const userRouter = (await import('./routes/user')).default;
 
-  // Register admin routes with admin middleware
+  // Import admin routes
+  const adminUsersRouter = (await import('./routes/admin/users')).default;
+
+  // Register routes with middleware
   app.use('/api/bookings', isAdmin, bookingsRouter);
   app.use('/api/reports', isAdmin, reportsRouter);
+  app.use('/api/user', isAuthenticated, userRouter);
+  app.use('/api/admin/users', isAdmin, adminUsersRouter);
   // Vehicle routes
   app.get("/api/vehicles", async (req, res) => {
     try {

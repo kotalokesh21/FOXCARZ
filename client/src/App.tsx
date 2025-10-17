@@ -23,12 +23,14 @@ import AdminLogin from "@/pages/auth/admin-login";
 
 // Protected Pages
 import Booking from "@/pages/booking";
+import ProfileSettings from "@/pages/profile/settings";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminCars from "@/pages/admin/cars";
 import AddCar from "@/pages/admin/cars/add";
 import AdminBookings from "@/pages/admin/bookings";
+import AdminUsers from "@/pages/admin/users";
 import Reports from "@/pages/admin/reports";
 
 function Router() {
@@ -59,6 +61,14 @@ function Router() {
               {() => (
                 <ProtectedRoute>
                   <Booking />
+                </ProtectedRoute>
+              )}
+            </Route>
+
+            <Route path="/profile/settings">
+              {() => (
+                <ProtectedRoute>
+                  <ProfileSettings />
                 </ProtectedRoute>
               )}
             </Route>
@@ -98,6 +108,14 @@ function Router() {
               {() => (
                 <ProtectedRoute adminOnly>
                   <Reports />
+                </ProtectedRoute>
+              )}
+            </Route>
+
+            <Route path="/admin/users" >
+              {() => (
+                <ProtectedRoute adminOnly>
+                  <AdminUsers />
                 </ProtectedRoute>
               )}
             </Route>

@@ -111,9 +111,12 @@ export default function AdminDashboard() {
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Button variant="outline" asChild>
           <a href="/admin/cars/add">Add New Car</a>
+        </Button>
+        <Button variant="outline" asChild>
+          <a href="/admin/users">Manage Users</a>
         </Button>
         <Button variant="outline" asChild>
           <a href="/admin/bookings">View Bookings</a>

@@ -1,9 +1,11 @@
-import { type Vehicle, type InsertVehicle, type Location, type InsertLocation, type Booking, type InsertBooking } from "@shared/schema";
+import { type Vehicle, type InsertVehicle, type Location, type InsertLocation, type Booking, type InsertBooking, type User, type InsertUser } from "@shared/schema";
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon, neonConfig } from '@neondatabase/serverless';
 import { vehicles, locations, bookings, users, admins } from '@shared/schema';
 import * as dotenv from 'dotenv';
 import path from 'path';
+import { randomUUID } from "crypto";
+import { eq } from 'drizzle-orm';
 
 // Load environment variables
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
@@ -14,7 +16,6 @@ neonConfig.fetchConnectionCache = true;
 // Initialize the database connection
 const sql = neon(process.env.DATABASE_URL!);
 export const db = drizzle(sql);
-import { randomUUID } from "crypto";
 
 export interface IStorage {
   // Vehicles
@@ -31,17 +32,27 @@ export interface IStorage {
   getBookings(): Promise<Booking[]>;
   getBooking(id: string): Promise<Booking | undefined>;
   createBooking(booking: InsertBooking): Promise<Booking>;
+
+  // Users
+  getUsers(): Promise<User[]>;
+  getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
   private vehicles: Map<string, Vehicle>;
   private locations: Map<string, Location>;
   private bookings: Map<string, Booking>;
+  private users: Map<string, User>;
 
   constructor() {
     this.vehicles = new Map();
     this.locations = new Map();
     this.bookings = new Map();
+    this.users = new Map();
     this.seedData();
   }
 
@@ -264,6 +275,144 @@ export class MemStorage implements IStorage {
     this.bookings.set(id, booking);
     return booking;
   }
+
+  // Users
+  async getUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(user => user.email === email);
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const id = randomUUID();
+    const now = new Date().toISOString();
+    const user: User = {
+      ...insertUser,
+      id,
+      address: insertUser.address ?? null,
+      phone: insertUser.phone ?? null,
+      profilePicture: insertUser.profilePicture ?? null,
+      createdAt: now,
+      updatedAt: now
+    };
+    this.users.set(id, user);
+    return user;
+  }
+
+  async updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const existingUser = await this.getUser(id);
+    if (!existingUser) {
+      return undefined;
+    }
+
+    const updatedUser: User = {
+      ...existingUser,
+      ...updates,
+      updatedAt: new Date().toISOString()
+    };
+
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    return this.users.delete(id);
+  }
 }
 
-export const storage = new MemStorage();
+export class DbStorage implements IStorage {
+  // Vehicles
+  async getVehicles(): Promise<Vehicle[]> {
+    return db.select().from(vehicles).execute();
+  }
+
+  async getVehicle(id: string): Promise<Vehicle | undefined> {
+    const results = await db.select().from(vehicles).where(eq(vehicles.id, id)).execute();
+    return results[0];
+  }
+
+  async createVehicle(vehicle: InsertVehicle): Promise<Vehicle> {
+    const results = await db.insert(vehicles).values(vehicle).returning().execute();
+    return results[0];
+  }
+
+  // Locations
+  async getLocations(): Promise<Location[]> {
+    return db.select().from(locations).execute();
+  }
+
+  async getLocation(id: string): Promise<Location | undefined> {
+    const results = await db.select().from(locations).where(eq(locations.id, id)).execute();
+    return results[0];
+  }
+
+  async createLocation(location: InsertLocation): Promise<Location> {
+    const results = await db.insert(locations).values(location).returning().execute();
+    return results[0];
+  }
+
+  // Bookings
+  async getBookings(): Promise<Booking[]> {
+    return db.select().from(bookings).execute();
+  }
+
+  async getBooking(id: string): Promise<Booking | undefined> {
+    const results = await db.select().from(bookings).where(eq(bookings.id, id)).execute();
+    return results[0];
+  }
+
+  async createBooking(booking: InsertBooking): Promise<Booking> {
+    const results = await db.insert(bookings).values(booking).returning().execute();
+    return results[0];
+  }
+
+  // Users
+  async getUsers(): Promise<User[]> {
+    return db.select().from(users).execute();
+  }
+
+  async getUser(id: string): Promise<User | undefined> {
+    const results = await db.select().from(users).where(eq(users.id, id)).execute();
+    return results[0];
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const results = await db.select().from(users).where(eq(users.email, email)).execute();
+    return results[0];
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const results = await db.insert(users).values(user).returning().execute();
+    return results[0];
+  }
+
+  async updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const results = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date().toISOString() })
+      .where(eq(users.id, id))
+      .returning()
+      .execute();
+    return results[0];
+  }
+
+  async deleteUser(id: string): Promise<boolean> {
+    const results = await db
+      .delete(users)
+      .where(eq(users.id, id))
+      .returning()
+      .execute();
+    return results.length > 0;
+  }
+}
+
+// Export the storage implementation based on environment
+export const storage = process.env.NODE_ENV === 'production' 
+  ? new DbStorage()
+  : new MemStorage();

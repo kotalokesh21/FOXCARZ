@@ -9,7 +9,11 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
+  phone: text("phone"),
+  address: text("address"),
+  profilePicture: text("profile_picture"),
   createdAt: text("created_at").default(sql`now()`),
+  updatedAt: text("updated_at").default(sql`now()`),
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({

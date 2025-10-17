@@ -2,9 +2,54 @@ import { useLocation } from "wouter";
 import { Car, Phone } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
+import { UserProfileMenu } from "./user-profile-menu";
+import { useEffect, useState } from "react";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  profilePicture: string | null;
+}
 
 export function Header() {
   const [, navigate] = useLocation();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    // Fetch current user data when component mounts
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/auth/me', {
+          credentials: 'include' // Important for sending cookies
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        setUser(null);
+        // Force reload to clear any cached states
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -63,13 +108,17 @@ export function Header() {
               <span className="sr-only">Call us</span>
             </Button>
           </a>
-          <Button
-            variant="secondary"
-            onClick={() => navigate("/auth")}
-            data-testid="button-signin"
-          >
-            Sign In
-          </Button>
+          {user ? (
+            <UserProfileMenu user={user} onSignOut={handleSignOut} />
+          ) : (
+            <Button
+              variant="secondary"
+              onClick={() => navigate("/auth")}
+              data-testid="button-signin"
+            >
+              Sign In
+            </Button>
+          )}
           <ThemeToggle />
         </div>
       </div>
