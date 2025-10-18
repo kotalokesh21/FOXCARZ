@@ -18,7 +18,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const adminUsersRouter = (await import('./routes/admin/users')).default;
 
   // Register routes with middleware
-  app.use('/api/bookings', isAdmin, bookingsRouter);
+  app.use('/api/bookings', bookingsRouter); // Allow public access to bookings
   app.use('/api/reports', isAdmin, reportsRouter);
   app.use('/api/user', isAuthenticated, userRouter);
   app.use('/api/admin/users', isAdmin, adminUsersRouter);

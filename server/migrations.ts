@@ -96,7 +96,13 @@ async function runMigration() {
         end_date TEXT NOT NULL,
         start_time TEXT NOT NULL,
         total_cost DECIMAL(10,2) NOT NULL,
-        rental_type TEXT NOT NULL
+        rental_type TEXT NOT NULL,
+        status TEXT DEFAULT 'PENDING',
+        advance_payment DECIMAL(10,2),
+        payment_status TEXT DEFAULT 'PENDING',
+        refund_status TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
 

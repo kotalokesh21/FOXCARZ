@@ -93,6 +93,12 @@ export const bookings = pgTable("bookings", {
   startTime: text("start_time").notNull(),
   totalCost: decimal("total_cost", { precision: 10, scale: 2 }).notNull(),
   rentalType: text("rental_type").notNull(), // hourly, daily, weekly
+  status: text("status").default('PENDING'), // PENDING, CONFIRMED, CANCELLED
+  advancePayment: decimal("advance_payment", { precision: 10, scale: 2 }),
+  paymentStatus: text("payment_status").default('PENDING'), // PENDING, PAID
+  refundStatus: text("refund_status"), // REFUNDED, NO_REFUND
+  createdAt: text("created_at").default(sql`now()`),
+  updatedAt: text("updated_at").default(sql`now()`),
 });
 
 export const insertBookingSchema = createInsertSchema(bookings).omit({

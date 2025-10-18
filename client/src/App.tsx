@@ -12,6 +12,7 @@ import ProtectedRoute from "@/components/protected-route";
 import Home from "@/pages/home";
 import Fleet from "@/pages/fleet";
 import VehicleDetail from "@/pages/vehicle-detail";
+import BookingConfirmation from "@/pages/booking/confirmation";
 import About from "@/pages/about";
 import FAQ from "@/pages/faq";
 import Terms from "@/pages/terms";
@@ -24,6 +25,7 @@ import AdminLogin from "@/pages/auth/admin-login";
 // Protected Pages
 import Booking from "@/pages/booking";
 import ProfileSettings from "@/pages/profile/settings";
+import PaymentPage from "@/pages/payment";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/dashboard";
@@ -61,6 +63,22 @@ function Router() {
               {() => (
                 <ProtectedRoute>
                   <Booking />
+                </ProtectedRoute>
+              )}
+            </Route>
+
+            <Route path="/payment">
+              {() => (
+                <ProtectedRoute>
+                  <PaymentPage />
+                </ProtectedRoute>
+              )}
+            </Route>
+
+            <Route path="/booking/confirmation">
+              {() => (
+                <ProtectedRoute>
+                  <BookingConfirmation />
                 </ProtectedRoute>
               )}
             </Route>

@@ -91,15 +91,14 @@ export default function Booking() {
 
   const createBooking = useMutation({
     mutationFn: async (data: BookingFormData) => {
-      return apiRequest("POST", "/api/bookings", data);
+      const response = await apiRequest("POST", "/api/bookings", data);
+      const result = await response.json() as { bookingId: string };
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
-      toast({
-        title: "Booking Confirmed!",
-        description: "Your vehicle has been successfully booked. We'll contact you shortly.",
-      });
-      navigate("/");
+      // Redirect to payment page with booking ID
+      navigate(`/payment?bookingId=${response.bookingId}`);
     },
     onError: () => {
       toast({

@@ -1,4 +1,38 @@
-# FOXCARZ - Premium Car Rental Service
+# FOXCARZ - Premium Car Rental Platform 🚗
+
+FOXCARZ is a modern car rental platform built with React, TypeScript, and Express.js. It features real-time booking updates, secure payments, and an admin dashboard for fleet management.
+
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+
+FOXCARZ is a modern car rental platform built with React, TypeScript, and Express.js. It features real-time booking updates, secure payments, and an admin dashboard for fleet management.
+
+## System Architecture
+
+```mermaid
+graph TB
+    subgraph Client
+        React[React Frontend]
+        Socket[Socket.IO Client]
+        Query[React Query]
+    end
+    
+    subgraph Server
+        Express[Express.js Server]
+        SocketServer[Socket.IO Server]
+        DB[(PostgreSQL)]
+        Drizzle[Drizzle ORM]
+    end
+    
+    React --> Query
+    Query --> Express
+    Socket --> SocketServer
+    Express --> Drizzle
+    Drizzle --> DB
+    SocketServer --> Socket
+``` - Premium Car Rental Service
 
 FOXCARZ is a modern, full-stack car rental application built with React, TypeScript, and Express. It offers a seamless car rental experience with features like real-time availability, instant booking, and zero-deposit rentals.
 
@@ -72,9 +106,13 @@ FOXCARZ is a modern, full-stack car rental application built with React, TypeScr
    VITE_API_URL=http://localhost:8001
    ```
 
-4. Push the database schema:
+4. Push the database schema and seed initial data:
    ```bash
+   # Push schema to database
    npm run db:push
+
+   # Seed initial data (vehicles, locations, admin)
+   npm run db:seed
    ```
 
 5. Start the development servers:
@@ -101,9 +139,63 @@ FOXCARZ is a modern, full-stack car rental application built with React, TypeScr
 
 The application uses PostgreSQL with Drizzle ORM. Main tables:
 
-- **vehicles**: Car inventory and details
-- **bookings**: Rental bookings and customer info
-- **locations**: Pickup/drop-off locations
+#### vehicles
+- `id`: UUID (Primary Key)
+- `name`: Text (Car model name)
+- `category`: Text (sedan, suv, hatchback, luxury)
+- `image`: Text (Image URL)
+- `seats`: Integer (Number of seats)
+- `transmission`: Text (automatic, manual)
+- `fuelType`: Text (petrol, diesel, electric)
+- `hourlyRate`: Decimal(10,2)
+- `dailyRate`: Decimal(10,2)
+- `weeklyRate`: Decimal(10,2)
+- `available`: Boolean
+- `features`: Text[] (Array of features)
+
+#### bookings
+- `id`: UUID (Primary Key)
+- `vehicleId`: UUID (Foreign Key)
+- `customerName`: Text
+- `customerPhone`: Text
+- `customerWhatsapp`: Text
+- `locationId`: UUID (Foreign Key)
+- `startDate`: Text
+- `endDate`: Text
+- `startTime`: Text
+- `totalCost`: Decimal(10,2)
+- `rentalType`: Text (hourly, daily, weekly)
+- `status`: Text (PENDING, CONFIRMED, CANCELLED)
+- `advancePayment`: Decimal(10,2)
+- `paymentStatus`: Text (PENDING, PAID)
+- `refundStatus`: Text (REFUNDED, NO_REFUND)
+- `createdAt`: Timestamp
+- `updatedAt`: Timestamp
+
+#### locations
+- `id`: UUID (Primary Key)
+- `name`: Text
+- `address`: Text
+- `city`: Text
+- `phone`: Text
+
+#### users
+- `id`: UUID (Primary Key)
+- `name`: Text
+- `email`: Text (Unique)
+- `password`: Text (Hashed)
+- `phone`: Text
+- `address`: Text
+- `profilePicture`: Text
+- `createdAt`: Timestamp
+- `updatedAt`: Timestamp
+
+#### admins
+- `id`: UUID (Primary Key)
+- `name`: Text
+- `email`: Text (Unique)
+- `password`: Text (Hashed)
+- `createdAt`: Timestamp
 
 ### API Endpoints
 
